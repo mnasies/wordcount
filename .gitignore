@@ -24,3 +24,7 @@ target
 # Added by cargo
 
 /target
+
+# flowhook build log file
+
+wordcount-flowhook.log
