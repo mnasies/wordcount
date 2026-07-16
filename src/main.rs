@@ -68,15 +68,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    let mut sorted_file_data: Vec<(&String, &i32)> = file_data.iter().collect();
+    sorted_file_data.sort_by(|a, b| b.1.cmp(&a.1));
+
     println!("---- WORDCOUNT -----");
     println!("Word   Occurence Count");
     let mut counter = 0;
-    for (word, occurence) in file_data {
+    for (word, occurence) in sorted_file_data.iter() {
         println!("{word}:    {occurence}");
         counter += 1;
         if counter == top && top != 0 {
             break;
         }
     }
+    println!("Total Number of words: {}", sorted_file_data.len());
     Ok(())
 }
