@@ -14,10 +14,9 @@ fn read_lines(filename: &str) -> Vec<String> {
 
 // program entry point
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("Hello, world!");
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("Usage: <filename> --top <num>");
+        eprintln!("Usage: <filename> --top[OPTIONAL] <num>");
         return Err(Box::new(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             "Invalid input",
@@ -32,13 +31,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )));
     }
 
+    let mut top: i32 = 0;
+
     if args.len() > 2 {
+        if args.len() != 4 {
+            eprintln!("Usage: <filename> --top[OPTIONAL] <num>");
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Invalid input",
+            )));
+        }
         if args[2] != "--top" {
             eprintln!("Invalid input: {}", args[2]);
             return Err(Box::new(std::io::Error::new(
                 std::io::ErrorKind::InvalidInput,
                 "Invalid input",
             )));
+        }
+        top = match args[3].trim().parse::<i32>() {
+            Ok(number) => number,
+            Err(_) => {
+                return Err(Box::new(std::io::Error::new(
+                    std::io::ErrorKind::InvalidInput,
+                    "Error: Invalid Input, expected a number after `--top`",
+                )));
+            }
         }
     }
 
@@ -52,9 +69,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     println!("---- WORDCOUNT -----");
-    println!("Word         Occurence Count");
+    println!("Word   Occurence Count");
+    let mut counter = 0;
     for (word, occurence) in file_data {
         println!("{word}:    {occurence}");
+        counter += 1;
+        if counter == top && top != 0 {
+            break;
+        }
     }
     Ok(())
 }
